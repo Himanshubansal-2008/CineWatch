@@ -1,0 +1,43 @@
+:root {
+    --navbaar-color: rgb(31,31,31);
+    --background-color: rgb(20,20,20);
+    --text-color: whitesmoke;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--background-color);
+}
+
+.navbar {
+    background-color: var(--navbaar-color);
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo img {
+    background-color: transparent;
+    width: 45px;
+    height: 45px;
+}
+
+.logo h1{
+    background-color: var(--navbaar-color);
+    color: var(--text-color);
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}

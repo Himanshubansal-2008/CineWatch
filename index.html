@@ -16,5 +16,29 @@
         <h1 class="watchlist"></h1>
             
     </nav>
+    <section class="controls-section">
+        <div class="search-box">
+            <img src="./images/search.png" alt="Search Icon" class="search-icon">
+            <input type="text" id="search-input" placeholder="Search for movies, series...">
+        </div>
+        <div class="filter-sort-container">
+            <div class="filter-container">
+                <select id="filter">
+                    <option value="all">All Types</option>
+                    <option value="movie">Movies</option>
+                    <option value="series">Series</option>
+                    <option value="episodes">Episodes</option>
+                </select>
+            </div>
+            <div class="sort-container">
+                <select id="sort">
+                    <option value="sort-by">Sort By</option>
+                    <option value="newest">Year: Newest First</option>
+                    <option value="oldest">Year: Oldest First</option>
+                    <option value="rating">Rating: High to Low</option>
+                </select>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

@@ -15,7 +15,7 @@
         <div class="nav-right">
             <button class="theme-toggle" id="theme-img">☀️</button>
             <button id="random" class="random-btn">🎲 RANDOM</button>
-            <button class="watchlist-btn" id="watchlist">Watchlist</button>
+            <button class="watchlist-btn" id="watchlist">Watchlist 0</button>
         </div>
     </nav>
 
@@ -30,7 +30,7 @@
                     <option value="all">All Types</option>
                     <option value="movie">Movies</option>
                     <option value="series">Series</option>
-                    <option value="episodes">Episodes</option>
+                    <option value="episode">Episodes</option>
                 </select>
             </div>
             <div class="sort-container">
@@ -38,11 +38,14 @@
                     <option value="sort-by">Sort By</option>
                     <option value="newest">Year: Newest First</option>
                     <option value="oldest">Year: Oldest First</option>
-                    <option value="rating">Rating: High to Low</option>
                 </select>
             </div>
         </div>
     </section>
+
+    <main class="movies-container">
+        <div id="movie-grid" class="movie-grid"></div>
+    </main>
     <script src="./script.js"></script>
 </body>
 </html>

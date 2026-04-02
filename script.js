@@ -1,5 +1,8 @@
 const toggleBtn = document.getElementById("theme-img");
 const movieGrid = document.getElementById("movie-grid");
+const searchInput = document.getElementById("search-input");
+const randomBtn = document.getElementById("random");
+const watchlistBtn = document.getElementById("watchlist");
 
 const API_KEY = "4ebbe81";
 const API_URL = "https://www.omdbapi.com/";
@@ -128,5 +131,41 @@ function displayMovies(movies) {
         movieGrid.appendChild(movieCard);
     });
 }
+
+// Search
+let debounceTimer;
+searchInput.addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        const query = searchInput.value.trim();
+        if (query.length > 2) {
+            searchMovies(query);
+        } else if (query.length === 0) {
+            fetchAllMovies();
+        }
+    }, 500);
+});
+
+async function searchMovies(query) {
+    try {
+        movieGrid.innerHTML = '<div class="loading">Searching...</div>';
+        let url = `${API_URL}?apikey=${API_KEY}&s=${query}`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.Response === "True") {
+            currentMovies = data.Search;
+            displayMovies(currentMovies);
+        } else {
+            currentMovies = [];
+            movieGrid.innerHTML = `<p class="no-results">No results found for "${query}".</p>`;
+        }
+    } catch (error) {
+        console.error("Error searching movies:", error);
+        movieGrid.innerHTML = `<p class="error">Something went wrong. Please try again later.</p>`;
+    }
+}
+
 
 fetchAllMovies();

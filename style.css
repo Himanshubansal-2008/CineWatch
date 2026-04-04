@@ -509,3 +509,43 @@ body.light .add-to-watchlist-btn:hover {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+.load-more-btn {
+    display: block;
+    margin: 40px auto 30px;
+    padding: 15px 45px;
+    background-color: var(--primary-red);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.load-more-btn:hover {
+    transform: translateY(-3px);
+    background-color: #ff1f1f;
+}
+
+.no-cover {
+    width: 100%;
+    height: 100%;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 8px;
+    text-align: center;
+    padding: 20px;
+}

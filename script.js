@@ -1,4 +1,4 @@
-const toggleBtn = document.getElementById("theme-img");
+const toggleBtn = document.getElementById("theme-toggle");
 const movieGrid = document.getElementById("movie-grid");
 const searchInput = document.getElementById("search-input");
 const randomBtn = document.getElementById("random");
@@ -7,7 +7,7 @@ const filterSelect = document.getElementById("filter");
 const sortSelect = document.getElementById("sort");
 const loadMoreBtn = document.getElementById("load-more");
 
-
+// API Configuration
 const API_KEY = "4ebbe81";
 const API_URL = "https://www.omdbapi.com/";
 
@@ -37,6 +37,13 @@ toggleBtn.addEventListener("click", () => {
 if (localStorage.getItem("theme") === "light") {
     document.body.classList.add("light");
     toggleBtn.textContent = "🌙";
+}
+
+function getPosterHTML(poster, title, extraClass = "") {
+    if (poster && poster !== "N/A") {
+        return `<img src="${poster}" alt="${title}" class="${extraClass}" onerror="this.outerHTML='<div class=\\'no-cover ${extraClass}\\'><span>No Cover</span></div>';">`;
+    }
+    return `<div class="no-cover ${extraClass}"><span>No Cover</span></div>`;
 }
 
 async function fetchAllMovies(filterType = "all", isLoadMore = false) {
@@ -80,11 +87,10 @@ async function fetchAllMovies(filterType = "all", isLoadMore = false) {
             const uniqueMovies = Array.from(new Map(newMovies.map(m => [m.imdbID, m])).values());
             if (!isLoadMore) {
                 currentMovies = uniqueMovies;
-                sortMovies();
             } else {
                 currentMovies = currentMovies.concat(uniqueMovies);
-                sortMovies();
             }
+            sortMovies();
             loadMoreBtn.style.display = "block";
         } else if (!isLoadMore) {
             movieGrid.innerHTML = '<p class="no-results">No results found.</p>';
@@ -100,7 +106,7 @@ async function searchMovies(query, filterType = "all") {
     try {
         movieGrid.innerHTML = '<div class="loading">Searching...</div>';
         loadMoreBtn.style.display = "none";
-        let url = `${API_URL}?apikey=${API_KEY}&s=${query}`;
+        let url = `${API_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}`;
         if (filterType && filterType !== "all") url += `&type=${filterType}`;
 
         const response = await fetch(url);
@@ -142,19 +148,11 @@ function appendMovies(movies) {
         const movieCard = document.createElement("div");
         movieCard.className = "movie-card";
 
-        let posterHTML;
-        if (movie.Poster && movie.Poster !== "N/A") {
-            // If image not avl then it will show no cover
-            posterHTML = `<img src="${movie.Poster}" alt="${movie.Title}" onerror="this.outerHTML='<div class=\\'no-cover\\'><span>No Cover</span></div>';">`;
-        } else {
-            posterHTML = `<div class="no-cover"><span>No Cover</span></div>`;
-        }
-
         const isInWatchlist = watchlist.some(m => m.imdbID === movie.imdbID);
 
         movieCard.innerHTML = `
             <div class="poster-wrapper">
-                ${posterHTML}
+                ${getPosterHTML(movie.Poster, movie.Title)}
                 <div class="movie-badge">${movie.Type}</div>
             </div>
             <div class="movie-info">
@@ -165,8 +163,8 @@ function appendMovies(movies) {
                 </button>
             </div>
         `;
-        const btn = movieCard.querySelector('.add-to-watchlist-btn');
-        btn.addEventListener('click', (e) => {
+        
+        movieCard.querySelector('.add-to-watchlist-btn').addEventListener('click', (e) => {
             e.stopPropagation();
             toggleWatchlist(movie);
         });
@@ -179,70 +177,14 @@ function appendMovies(movies) {
     });
 }
 
-loadMoreBtn.addEventListener("click", () => {
-    currentPage++;
-    fetchAllMovies(filterSelect.value, true);
-});
-
-let debounceTimer;
-searchInput.addEventListener("input", () => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-        const query = searchInput.value.trim();
-        const selectedFilter = filterSelect.value;
-        if (query.length > 2) searchMovies(query, selectedFilter);
-        else if (query.length === 0) fetchAllMovies(selectedFilter);
-    }, 500);
-});
-
-filterSelect.addEventListener("change", () => {
-    const selectedFilter = filterSelect.value;
-    const query = searchInput.value.trim();
-    if (query.length > 2) searchMovies(query, selectedFilter);
-    else fetchAllMovies(selectedFilter);
-});
-
-sortSelect.addEventListener("change", () => {
-    sortMovies();
-});
-
-randomBtn.addEventListener("click", () => {
-    if (watchlist.length === 0) {
-        alert("Your watchlist is empty! Add some movies first.");
-        return;
-    }
-    const randomIndex = Math.floor(Math.random() * watchlist.length);
-    const randomMovie = watchlist[randomIndex];
-    openMovieModal(randomMovie.imdbID);
-});
-
-function sortMovies() {
-    const sortValue = sortSelect.value;
-    if (sortValue === "newest") {
-        currentMovies.sort((a, b) => {
-            const yearA = parseInt(a.Year.substring(0, 4)) || 0;
-            const yearB = parseInt(b.Year.substring(0, 4)) || 0;
-            return yearB - yearA;
-        });
-    } else if (sortValue === "oldest") {
-        currentMovies.sort((a, b) => {
-            const yearA = parseInt(a.Year.substring(0, 4)) || 0;
-            const yearB = parseInt(b.Year.substring(0, 4)) || 0;
-            return yearA - yearB;
-        });
-    } else if (sortValue === "sort-by") {
-        currentMovies.sort(() => 0.5 - Math.random());
-    }
-    displayMovies(currentMovies);
-}
-
 function updateMainGridButtons() {
     const buttons = document.querySelectorAll('.add-to-watchlist-btn');
     buttons.forEach(btn => {
         const imdbid = btn.getAttribute('data-imdbid');
         if (imdbid) {
             const isIn = watchlist.some(m => m.imdbID === imdbid);
-            btn.querySelector('span').textContent = isIn ? "- Remove" : "+ Watchlist";
+            const span = btn.querySelector('span');
+            if (span) span.textContent = isIn ? "- Remove" : "+ Watchlist";
         }
     });
 }
@@ -252,7 +194,13 @@ function toggleWatchlist(movie) {
     if (index !== -1) {
         watchlist.splice(index, 1);
     } else {
-        watchlist.push(movie);
+        watchlist.push({
+            Title: movie.Title,
+            Year: movie.Year,
+            imdbID: movie.imdbID,
+            Type: movie.Type,
+            Poster: movie.Poster
+        });
     }
     localStorage.setItem('watchlist', JSON.stringify(watchlist));
     updateWatchlistCount();
@@ -294,15 +242,10 @@ function renderSidebarWatchlist() {
         const item = document.createElement("div");
         item.className = "watchlist-item";
 
-        let posterHTML;
-        if (movie.Poster && movie.Poster !== "N/A") {
-            posterHTML = `<img src="${movie.Poster}" alt="${movie.Title}" onerror="this.outerHTML='<div class=\\'no-cover sidebar-no-cover\\'><span>No Cover</span></div>';">`;
-        } else {
-            posterHTML = `<div class="no-cover sidebar-no-cover"><span>No Cover</span></div>`;
-        }
-
         item.innerHTML = `
-            <div class="sidebar-poster-wrapper">${posterHTML}</div>
+            <div class="sidebar-poster-wrapper">
+                ${getPosterHTML(movie.Poster, movie.Title, "sidebar-no-cover")}
+            </div>
             <div class="item-info">
                 <h4>${movie.Title}</h4>
                 <span>${movie.Year}</span>
@@ -310,8 +253,7 @@ function renderSidebarWatchlist() {
             <button class="remove-item">🗑️</button>
         `;
 
-        const removeBtn = item.querySelector('.remove-item');
-        removeBtn.addEventListener('click', () => {
+        item.querySelector('.remove-item').addEventListener('click', () => {
             toggleWatchlist(movie);
         });
         sidebarContent.appendChild(item);
@@ -331,18 +273,11 @@ async function openMovieModal(imdbID) {
         const data = await response.json();
 
         if (data.Response === "True") {
-            let posterHTML;
-            if (data.Poster && data.Poster !== "N/A") {
-                posterHTML = `<img src="${data.Poster}" alt="${data.Title}" class="modal-poster" onerror="this.outerHTML='<div class=\\'no-cover\\'><span>No Cover</span></div>';">`;
-            } else {
-                posterHTML = `<div class="no-cover"><span>No Cover</span></div>`;
-            }
-
             const isInWatchlist = watchlist.some(m => m.imdbID === data.imdbID);
 
             modalContent.innerHTML = `
                 <div class="modal-poster-wrapper">
-                    ${posterHTML}
+                    ${getPosterHTML(data.Poster, data.Title, "modal-poster")}
                 </div>
                 <div class="modal-details" style="position: relative;">
                     <h2 class="modal-title">${data.Title}</h2>
@@ -395,6 +330,57 @@ movieModalOverlay.addEventListener('click', (e) => {
         movieModalOverlay.classList.remove("active");
     }
 });
+
+loadMoreBtn.addEventListener("click", () => {
+    currentPage++;
+    fetchAllMovies(filterSelect.value, true);
+});
+
+let debounceTimer;
+searchInput.addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        const query = searchInput.value.trim();
+        const selectedFilter = filterSelect.value;
+        if (query.length > 2) searchMovies(query, selectedFilter);
+        else if (query.length === 0) fetchAllMovies(selectedFilter);
+    }, 500);
+});
+
+filterSelect.addEventListener("change", () => {
+    const selectedFilter = filterSelect.value;
+    const query = searchInput.value.trim();
+    if (query.length > 2) searchMovies(query, selectedFilter);
+    else fetchAllMovies(selectedFilter);
+});
+
+sortSelect.addEventListener("change", () => {
+    sortMovies();
+});
+
+randomBtn.addEventListener("click", () => {
+    if (watchlist.length === 0) {
+        alert("Your watchlist is empty! Add some movies first.");
+        return;
+    }
+    const randomIndex = Math.floor(Math.random() * watchlist.length);
+    const randomMovie = watchlist[randomIndex];
+    openMovieModal(randomMovie.imdbID);
+});
+
+function sortMovies() {
+    const sortValue = sortSelect.value;
+    const parseYear = y => parseInt(y.substring(0, 4)) || 0;
+
+    if (sortValue === "newest") {
+        currentMovies.sort((a, b) => parseYear(b.Year) - parseYear(a.Year));
+    } else if (sortValue === "oldest") {
+        currentMovies.sort((a, b) => parseYear(a.Year) - parseYear(b.Year));
+    } else if (sortValue === "sort-by") {
+        currentMovies.sort(() => 0.5 - Math.random());
+    }
+    displayMovies(currentMovies);
+}
 
 updateWatchlistCount();
 fetchAllMovies(filterSelect.value);

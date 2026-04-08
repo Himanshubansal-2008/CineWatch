@@ -105,7 +105,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.3s ;
+    transition: all 0.3s;
 }
 
 .random-btn:hover {
@@ -377,19 +377,19 @@ body.light select:hover {
     .navbar {
         padding: 15px 30px;
     }
-    
+
     .controls-section {
         padding: 20px 30px;
     }
-    
+
     .movies-container {
         padding: 0 30px 30px;
     }
-    
+
     .search-box {
         width: 300px;
     }
-    
+
     .movie-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
         gap: 20px;
@@ -402,22 +402,22 @@ body.light select:hover {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .logo h1 {
         font-size: 22px;
     }
-    
+
     .nav-right {
         width: 100%;
         justify-content: center;
         gap: 15px;
     }
-    
+
     .random-btn {
         padding: 8px 16px;
         font-size: 12px;
     }
-    
+
     .watchlist-btn {
         padding: 8px 16px;
         font-size: 13px;
@@ -429,22 +429,22 @@ body.light select:hover {
         align-items: stretch;
         gap: 16px;
     }
-    
+
     .search-box {
         width: 100%;
     }
-    
+
     .filter-sort-container {
         width: 100%;
         justify-content: space-between;
         gap: 12px;
     }
-    
-    .filter-container, 
+
+    .filter-container,
     .sort-container {
         flex: 1;
     }
-    
+
     select {
         width: 100%;
         padding: 12px 35px 12px 15px;
@@ -454,7 +454,7 @@ body.light select:hover {
     .movies-container {
         padding: 0 20px 30px;
     }
-    
+
     .movie-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 15px;
@@ -463,22 +463,22 @@ body.light select:hover {
     .movie-info {
         padding: 12px;
     }
-    
+
     .movie-title {
         font-size: 15px;
         margin-bottom: 4px;
     }
-    
+
     .movie-year {
         font-size: 12px;
         margin-bottom: 12px;
     }
-    
+
     .add-to-watchlist-btn {
         padding: 8px;
         font-size: 13px;
     }
-    
+
     .movie-badge {
         font-size: 10px;
         padding: 3px 8px;
@@ -486,17 +486,19 @@ body.light select:hover {
 }
 
 /* for very small window */
-@media (max-width: 480px) {  
+@media (max-width: 480px) {
     .filter-sort-container {
         flex-direction: column;
     }
-    
+
     .nav-right {
         justify-content: space-between;
     }
 }
 
-.loading, .no-results, .error {
+.loading,
+.no-results,
+.error {
     grid-column: 1 / -1;
     text-align: center;
     padding: 100px 20px;
@@ -523,8 +525,11 @@ body.light select:hover {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
+
 .load-more-btn {
     display: block;
     margin: 40px auto 30px;
@@ -593,7 +598,7 @@ body.light select:hover {
     width: 400px;
     height: 100vh;
     background-color: var(--navbar-color);
-    box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
@@ -753,7 +758,7 @@ body.light select:hover {
     transform: translateY(20px);
     transition: transform 0.3s ease;
     border: 1px solid var(--border-color);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     color: var(--text-color);
 }
 
@@ -846,19 +851,24 @@ body.light select:hover {
 body.light .movie-modal {
     background-color: var(--card-bg);
 }
+
 body.light .badge {
     background: #e0e0e0;
     color: #000;
 }
+
 body.light .modal-text strong {
     color: #333;
 }
+
 body.light .modal-plot {
     color: #555;
 }
+
 body.light .close-modal {
     color: #000;
 }
+
 body.light .close-modal:hover {
     color: var(--primary-red);
 }
@@ -869,9 +879,11 @@ body.light .close-modal:hover {
         align-items: center;
         text-align: center;
     }
+
     .modal-badges {
         justify-content: center;
     }
+
     .modal-poster-wrapper {
         width: 100%;
         max-width: 250px;
